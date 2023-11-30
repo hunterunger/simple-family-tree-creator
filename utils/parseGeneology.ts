@@ -54,9 +54,13 @@ export function parseFamilyTree(yamlInput: string) {
     // Process each family unit
     for (const key in data) {
         const parents = key.split("+").map((p) => parseIndividual(p.trim()));
-        const children = data[key].map((child: string) =>
-            parseIndividual(child, parents[1].lastName)
-        );
+        const children = data[key]
+            .map((child: string) => {
+                if (child === "none") return null;
+
+                return parseIndividual(child, parents[1].lastName);
+            })
+            .filter((child: Individual | null) => child !== null);
         const marriageLabel = extractMarriageLabel(key);
 
         families.push({ parents, children, marriageLabel });

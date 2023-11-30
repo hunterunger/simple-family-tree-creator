@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
+    "@mantine/core": "^7.2.2",
+    "@mantine/hooks": "^7.2.2",
     "@mdx-js/react": "^3.0.0",
     "mdx-mermaid": "^2.0.0",
     "mermaid": "^10.6.1",
@@ -24,7 +26,9 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
-    "postcss": "^8",
+    "postcss": "^8.4.31",
+    "postcss-preset-mantine": "^1.11.0",
+    "postcss-simple-vars": "^7.0.1",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
   }
