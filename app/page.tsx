@@ -11,6 +11,7 @@ import {
     FolderOpenIcon,
     PlusIcon,
     ArrowUpOnSquareIcon,
+    ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
 
 const colors: any = config.theme?.extend?.colors;
@@ -37,7 +38,7 @@ export default function Home() {
 
     return (
         <div className=" flex flex-col h-full">
-            <div className=" px-3 py-2 h-[100%] overflow-scroll">
+            <div className=" px-3 py-2 pt-12 h-[100%] overflow-scroll">
                 <Mermaid
                     svg={svg}
                     setSvg={(svg) => {
@@ -48,68 +49,83 @@ export default function Home() {
                     {content}
                 </Mermaid>
             </div>
-            <Container className=" h-full shadow-lg rounded-xl">
-                <form className="h-full flex sm:flex-row flex-col gap-3">
-                    <div className=" flex flex-col w-min gap-3">
-                        <div className=" flex flex-col w-min gap-3"></div>
-                    </div>
-                    <div className="w-full h-full relative">
-                        <textarea
-                            ref={textareaRef}
-                            onChange={(e) => {
-                                updateContent(e.target.value);
-                            }}
-                            defaultValue={treeTemplates.basic}
-                            className=" border-2 border-gray-300 rounded-md font-mono text-sm p-3 w-full h-full "
-                        />
-                        {error && (
-                            <div className="absolute bottom-3 right-3 bg-red-500 text-white px-3 py-2 rounded-md">
-                                {error}
-                            </div>
-                        )}
-                    </div>
-                    <div className=" flex sm:flex-col flex-row flex-wrap sm:w-min w-full gap-3">
-                        <ExportMenu content={content} svg={svg} />
-                        <Button
-                            color={colors["primary-1"]}
-                            leftSection={<FolderOpenIcon className=" w-5" />}
-                            onClick={(e) => {
-                                e.preventDefault();
+            <div
+                className="h-full"
+                style={{
+                    boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.20)",
+                }}
+            >
+                <Container className=" h-full flex flex-col py-2" alt>
+                    <h2>Editor</h2>
+                    <form className=" h-full flex sm:flex-row flex-col gap-3">
+                        <div className="w-full h-full relative">
+                            <textarea
+                                ref={textareaRef}
+                                onChange={(e) => {
+                                    updateContent(e.target.value);
+                                }}
+                                defaultValue={treeTemplates.basic}
+                                className=" border-2 font-bold border-gray-300 rounded-md font-mono text-sm p-3 w-full h-full bg-white bg-opacity-20 resize-none "
+                            />
+                            {error && (
+                                <div className="absolute bottom-3 right-3 bg-primary-1 font-bold text-white px-3 py-2 rounded-md flex flex-row gap-1 items-center">
+                                    {error}
+                                    <ExclamationCircleIcon className=" w-5 inline-block ml-2" />
+                                </div>
+                            )}
+                        </div>
+                        <div className=" flex sm:flex-col flex-row flex-wrap sm:w-min w-full gap-3">
+                            <InsertMenu
+                                textareaRef={textareaRef}
+                                updateContent={updateContent}
+                            />
+                            <ExportMenu
+                                content={content}
+                                svg={svg}
+                                textareaRef={textareaRef}
+                            />
+                            <Button
+                                color={colors["primary-1"]}
+                                leftSection={
+                                    <FolderOpenIcon className=" w-5" />
+                                }
+                                onClick={(e) => {
+                                    e.preventDefault();
 
-                                const input = document.createElement("input");
+                                    const input =
+                                        document.createElement("input");
 
-                                input.type = "file";
+                                    input.type = "file";
 
-                                input.onchange = (e: any) => {
-                                    if (!e.target || !e.target.files) return;
+                                    input.onchange = (e: any) => {
+                                        if (!e.target || !e.target.files)
+                                            return;
 
-                                    const file = e.target.files[0];
+                                        const file = e.target.files[0];
 
-                                    const reader = new FileReader();
+                                        const reader = new FileReader();
 
-                                    reader.onload = (e) => {
-                                        if (!e.target) return;
+                                        reader.onload = (e) => {
+                                            if (!e.target) return;
 
-                                        const yaml = e.target.result as string;
-                                        textareaRef.current!.value = yaml;
-                                        updateContent(yaml);
+                                            const yaml = e.target
+                                                .result as string;
+                                            textareaRef.current!.value = yaml;
+                                            updateContent(yaml);
+                                        };
+
+                                        reader.readAsText(file);
                                     };
 
-                                    reader.readAsText(file);
-                                };
-
-                                input.click();
-                            }}
-                        >
-                            Upload YAML
-                        </Button>
-                        <InsertMenu
-                            textareaRef={textareaRef}
-                            updateContent={updateContent}
-                        />
-                    </div>
-                </form>
-            </Container>
+                                    input.click();
+                                }}
+                            >
+                                Upload YAML
+                            </Button>
+                        </div>
+                    </form>
+                </Container>
+            </div>
         </div>
     );
 }
@@ -138,6 +154,16 @@ function InsertMenu(props: { textareaRef: any; updateContent: any }) {
                     }}
                 >
                     Basic Family
+                </Menu.Item>
+                <Menu.Item
+                    onClick={(e) => {
+                        e.preventDefault();
+                        textareaRef.current!.value +=
+                            treeTemplates.mediumGeneology;
+                        updateContent(treeTemplates.mediumGeneology);
+                    }}
+                >
+                    Medium Geneology
                 </Menu.Item>
                 <Menu.Item
                     onClick={(e) => {
@@ -230,8 +256,44 @@ function ExportMenu(props: {
                         URL.revokeObjectURL(url);
                     }}
                 >
-                    YAML (recommended)
+                    YAML
                 </Menu.Item>
+                {/* <Menu.Item
+                    onClick={(e) => {
+                        e.preventDefault();
+                        if (!textareaRef.current || !textareaRef.current.value)
+                            return;
+
+                        fetch("/api/svg-to-png", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                svg: svg,
+                            }),
+                        })
+                            .then((res) => res.blob())
+                            .then((blob) => {
+                                const url = URL.createObjectURL(blob);
+
+                                const a = document.createElement("a");
+
+                                a.href = url;
+                                a.download = "geneology.png";
+
+                                document.body.appendChild(a);
+
+                                a.click();
+
+                                document.body.removeChild(a);
+
+                                URL.revokeObjectURL(url);
+                            });
+                    }}
+                >
+                    PNG Image
+                </Menu.Item> */}
                 <Menu.Item
                     onClick={(e) => {
                         e.preventDefault();

@@ -49,4 +49,28 @@ Unknown 2 + Hezron Abraham:
 
 Unknown 3 + Ram Abraham:
 - Amminidab`,
+    mediumGeneology: `Elizabeth Bowes-Lyon + GeorgeVI Windsor:
+- ElizabethII
+- Margaret
+
+Philip Mountbatten + ElizabethII Windsor:
+- Charles
+- Anne
+- Andrew
+- Edward
+
+Diana Spencer + Charles Windsor:
+- William
+- Harry
+
+Camilla Parker Bowles + Charles Windsor:
+- none
+
+William Windsor + Catherine Middleton:
+- George
+- Charlotte
+- Louis
+
+Harry Windsor + Meghan Markle:
+- Archie`,
 };

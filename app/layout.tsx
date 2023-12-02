@@ -4,8 +4,13 @@ import { cx } from "@/utils/all";
 import { ColorSchemeScript, MantineProvider, createTheme } from "@mantine/core";
 import "./globals.css";
 import "@mantine/core/styles.css";
+import Navbar from "@/components/Navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+    subsets: ["latin"],
+    weight: ["300", "400", "500", "600", "700"],
+    variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
     title: "Simple Family Tree Maker",
@@ -22,8 +27,17 @@ export default function RootLayout({
             <head>
                 <ColorSchemeScript />
             </head>
-            <body className={cx(inter.className, "h-screen")}>
-                <MantineProvider>{children}</MantineProvider>
+            <body
+                className={cx(
+                    inter.className,
+                    "h-screen bg-background-1 ",
+                    inter.variable
+                )}
+            >
+                <MantineProvider>
+                    <Navbar />
+                    <main className=" h-full">{children}</main>
+                </MantineProvider>
             </body>
         </html>
     );

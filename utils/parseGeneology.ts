@@ -1,5 +1,10 @@
 import * as yaml from "yaml";
-import fs from "fs";
+import config from "@/tailwind.config";
+
+const colors: any = config.theme?.extend?.colors;
+
+const primary1 = colors["primary-1"];
+const primary2 = colors["primary-2"];
 
 // Define a type to represent an individual in the family tree
 type Individual = {
@@ -75,7 +80,8 @@ function generateMermaidMarkdown(families: FamilyUnit[]): string {
     let markdown = "flowchart TB\n\n";
 
     // Add class definitions for colors
-    markdown += "classDef blue fill:#66deff,stroke:#000,color:#000\n";
+    markdown +=
+        "classDef prime1 fill:" + primary1 + ",stroke:white,color:white\n";
     markdown += "\n";
 
     // Utility function to generate a safe ID for use in Mermaid
@@ -94,7 +100,7 @@ function generateMermaidMarkdown(families: FamilyUnit[]): string {
             safeId(father.firstName + mother.firstName) +
             "(" +
             (family.marriageLabel || "💍") +
-            ")";
+            "):::prime1";
         // Include generation and marriage union if needed
         if (!marriageSet.has(marriageId)) {
             markdown += `\n%% GENERATION ${generation}%%\n`;

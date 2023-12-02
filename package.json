@@ -12,8 +12,6 @@
     "@heroicons/react": "^2.0.18",
     "@mantine/core": "^7.2.2",
     "@mantine/hooks": "^7.2.2",
-    "@mdx-js/react": "^3.0.0",
-    "mdx-mermaid": "^2.0.0",
     "mermaid": "^10.6.1",
     "next": "14.0.3",
     "react": "^18",

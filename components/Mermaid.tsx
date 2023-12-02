@@ -1,5 +1,5 @@
 import mermaid from "mermaid";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect } from "react";
 import config from "@/tailwind.config";
 
 let currentId = 0;
@@ -10,15 +10,16 @@ const colors: any = config.theme?.extend?.colors;
 mermaid.initialize({
     startOnLoad: false,
     theme: "base",
+
+    htmlLabels: false,
     flowchart: {
         useMaxWidth: false,
         htmlLabels: true,
     },
     securityLevel: "loose",
     themeVariables: {
-        fontFamily: "Inter",
-        fontSize: "16px",
-        // get ["primary-1"]
+        fontFamily: "Inter, --font-inter, sans-serif",
+        fontSize: "14px",
         primaryColor: colors["primary-2"] || "white",
         primaryBorderColor: "white",
         primaryTextColor: "white",
@@ -41,7 +42,7 @@ export default function Mermaid(props: {
                 try {
                     mermaid
                         .render(uuid(), children)
-                        .then((svgCode) => setSvg(svgCode.svg));
+                        .then(({ svg }) => setSvg(svg));
                 } catch (e) {
                     setSvg("");
                 }
@@ -53,5 +54,7 @@ export default function Mermaid(props: {
 
     if (!svg) return null;
 
-    return <div dangerouslySetInnerHTML={{ __html: svg }} />;
+    return (
+        <div className="text-sm " dangerouslySetInnerHTML={{ __html: svg }} />
+    );
 }
