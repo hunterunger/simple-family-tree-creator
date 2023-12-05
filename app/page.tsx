@@ -12,6 +12,9 @@ import {
     PlusIcon,
     ArrowUpOnSquareIcon,
     ExclamationCircleIcon,
+    ChevronDownIcon,
+    ChevronUpDownIcon,
+    ChevronUpIcon,
 } from "@heroicons/react/24/outline";
 import { useDebouncedValue } from "@mantine/hooks";
 
@@ -25,7 +28,10 @@ export default function Home() {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const [textAreaContent, setTextAreaContent] = useState(treeTemplates.basic);
-    const [debouncedTextContent] = useDebouncedValue(textAreaContent, 500);
+    const [debouncedTextContent] = useDebouncedValue(
+        textAreaContent,
+        textAreaContent.length > 1000 ? 1000 : 500
+    );
 
     const updateContent = (yamlStr: string) => {
         setTextAreaContent(yamlStr);
@@ -43,6 +49,8 @@ export default function Home() {
     useEffect(() => {
         updateContent(treeTemplates.basic);
     }, []);
+
+    const [hideEditor, setHideEditor] = useState(false);
 
     return (
         <div className=" flex flex-col h-full">
@@ -65,12 +73,30 @@ export default function Home() {
                 )}
             </div>
             <div
-                className="h-full"
+                className="cursor-pointer absolute bottom-2 left-1/2 flex flex-col items-center text-xs text-primary-2"
+                onClick={() => setHideEditor(!hideEditor)}
                 style={{
-                    boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.20)",
+                    transform: "translateX(-50%)",
                 }}
             >
-                <Container className=" h-full flex flex-col py-2" alt>
+                <ChevronUpIcon className="w-6 " />
+                Show Editor
+            </div>
+            <div
+                style={{
+                    boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.20)",
+                    height: hideEditor ? "0px" : "100%",
+                }}
+                className=" transition-all duration-300 ease-in-out overflow-hidden relative bg-background-1"
+            >
+                <Container className={"flex flex-col py-2 h-full "} alt>
+                    <ChevronDownIcon
+                        className={
+                            "w-6 cursor-pointer absolute top-2 right-1/2 translate-x-1/2 " +
+                            (hideEditor ? "transform rotate-180" : "")
+                        }
+                        onClick={() => setHideEditor(!hideEditor)}
+                    />
                     <h2>Editor</h2>
                     <form className=" h-full flex sm:flex-row flex-col gap-3">
                         <div className="w-full h-full relative">
