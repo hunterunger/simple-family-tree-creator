@@ -5,7 +5,7 @@ import Mermaid from "@/components/Mermaid";
 import { parseFamilyTree } from "@/utils/parseGeneology";
 import { useEffect, useRef, useState } from "react";
 import treeTemplates from "@/utils/treeTemplates";
-import { Menu, Button } from "@mantine/core";
+import { Menu, Button, Loader } from "@mantine/core";
 import config from "@/tailwind.config";
 import {
     FolderOpenIcon,
@@ -13,24 +13,32 @@ import {
     ArrowUpOnSquareIcon,
     ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
+import { useDebouncedValue } from "@mantine/hooks";
 
 const colors: any = config.theme?.extend?.colors;
 
 export default function Home() {
-    const [content, setContent] = useState("");
+    const [mermaidContent, setMermaidContent] = useState("");
     const [svg, setSvg] = useState("");
     const [error, setError] = useState("");
 
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+    const [textAreaContent, setTextAreaContent] = useState(treeTemplates.basic);
+    const [debouncedTextContent] = useDebouncedValue(textAreaContent, 500);
+
     const updateContent = (yamlStr: string) => {
+        setTextAreaContent(yamlStr);
+    };
+
+    useEffect(() => {
         try {
-            const tree = parseFamilyTree(yamlStr);
-            setContent(tree);
+            const tree = parseFamilyTree(debouncedTextContent);
+            setMermaidContent(tree);
         } catch (e) {
             setError("Invalid Syntax");
         }
-    };
+    }, [debouncedTextContent]);
 
     useEffect(() => {
         updateContent(treeTemplates.basic);
@@ -38,7 +46,7 @@ export default function Home() {
 
     return (
         <div className=" flex flex-col h-full">
-            <div className=" px-3 py-2 pt-12 h-[100%] overflow-scroll">
+            <div className=" px-3 py-2 pt-12 h-[100%] overflow-scroll relative">
                 <Mermaid
                     svg={svg}
                     setSvg={(svg) => {
@@ -46,8 +54,15 @@ export default function Home() {
                         setSvg(svg);
                     }}
                 >
-                    {content}
+                    {mermaidContent}
                 </Mermaid>
+                {!svg && (
+                    <Loader
+                        className="absolute top-1/2 left-1/2"
+                        color={colors["primary-3"]}
+                        size={30}
+                    />
+                )}
             </div>
             <div
                 className="h-full"
@@ -73,6 +88,14 @@ export default function Home() {
                                     <ExclamationCircleIcon className=" w-5 inline-block ml-2" />
                                 </div>
                             )}
+                            {textAreaContent.length !==
+                                debouncedTextContent.length && (
+                                <Loader
+                                    className="absolute bottom-3 right-3"
+                                    color={colors["primary-3"]}
+                                    size={15}
+                                />
+                            )}
                         </div>
                         <div className=" flex sm:flex-col flex-row flex-wrap sm:w-min w-full gap-3">
                             <InsertMenu
@@ -80,7 +103,7 @@ export default function Home() {
                                 updateContent={updateContent}
                             />
                             <ExportMenu
-                                content={content}
+                                mermaidContent={mermaidContent}
                                 svg={svg}
                                 textareaRef={textareaRef}
                             />
@@ -211,11 +234,11 @@ function InsertMenu(props: { textareaRef: any; updateContent: any }) {
 }
 
 function ExportMenu(props: {
-    content: string;
+    mermaidContent: string;
     svg: string;
     textareaRef?: any;
 }) {
-    const { content, svg, textareaRef } = props;
+    const { mermaidContent, svg, textareaRef } = props;
     return (
         <Menu shadow="md" width={200}>
             <Menu.Target>
@@ -324,7 +347,7 @@ function ExportMenu(props: {
                     onClick={(e) => {
                         e.preventDefault();
 
-                        const md = "```mermaid\n" + content + "\n```";
+                        const md = "```mermaid\n" + mermaidContent + "\n```";
 
                         const blob = new Blob([md], {
                             type: "text/markdown",

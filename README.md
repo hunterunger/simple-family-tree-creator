@@ -22,6 +22,12 @@ Mom Peterson + Dad Smith [Optional Title]:
     - Brian
 ```
 
+Also check out the following larger examples:
+
+-   [Family Guy (small)](/examples/family-guy-family-tree.yaml)
+-   [Royal Family (medium)](/examples/royal-family.yaml)
+-   [Abrahamic Lineage (large)](/examples/abraham-lineage.yaml)
+
 ### Flowchart Output
 
 (This might not render, depending on your markdown viewer.)
